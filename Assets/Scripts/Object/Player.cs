@@ -2,23 +2,57 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Character
 {
-    // Start is called before the first frame update
+    public int JumpForce = 1000;
+
+    protected override IHealthManager HealthManager {
+        get
+        {
+            return _healthManager;
+        }
+    }
+
+    private IHealthManager _healthManager;
+
     void Start()
     {
-
-
+        // load image
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Getrigidbody().velocity = new Vector2(0, 0);
+            Getrigidbody().AddForce(new Vector2(0, JumpForce));
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Show X eyes to show that player got harm for 1 sec
+        //if (collision.gameObject.TryGetComponent(out Damage d))
+        //{
+        //    float damage = d.DamageDealt();
+        //    HealthManager.DecreaseHealth(damage);
+        //}
+    }
+
+    public void Setup(
+        IHealthManager healthManager
+    )
+    {
+        _healthManager = healthManager;
+    }
+
+    public override float ComputeDamageReceive(Object sender, float damageDealt)
+    {
+        // minus by armor is available
+        return damageDealt;
+    }
+
+    private Rigidbody2D Getrigidbody()
+    {
+        return GetComponent<Rigidbody2D>();
     }
 }

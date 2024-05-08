@@ -7,6 +7,7 @@ public class ObstacleManager : MonoBehaviour
     public int Gap = 3;
     public float Width = 0.5f;
     public float SpawnDelay = 1.5f;
+    public float ObstacleSpeed = 1;
     public GameObject ObstaclePrefab;
 
     private IScreenManager ScreenManager { get; set; }
@@ -28,7 +29,7 @@ public class ObstacleManager : MonoBehaviour
             models.ForEach((obs) =>
             {
                 GameObject obstacleObject = Instantiate(ObstaclePrefab);
-                Obstacle obstacle = obstacleObject.GetComponent<Obstacle>();
+                PipeObstacle obstacle = obstacleObject.GetComponent<PipeObstacle>();
                 obstacle.Setup(obs);
             });
         }
@@ -57,6 +58,7 @@ public class ObstacleManager : MonoBehaviour
             Direction.Down,
             height,
             Width,
+            ObstacleSpeed,
             HandleObstacleOutOfScreen
         ));
         lists.Add(new ObstacleModel(
@@ -67,6 +69,7 @@ public class ObstacleManager : MonoBehaviour
             Direction.Up,
             lowerObsHeight,
             Width,
+            ObstacleSpeed,
             HandleObstacleOutOfScreen
         ));
         
@@ -78,7 +81,7 @@ public class ObstacleManager : MonoBehaviour
         ScreenManager = screenManager;
     }
 
-    private void HandleObstacleOutOfScreen(Obstacle sender, Vector2 centerPos)
+    private void HandleObstacleOutOfScreen(PipeObstacle sender, Vector2 centerPos)
     {
         if (centerPos.x >= ScreenManager.GetScreenRect().xMin - (Width / 2))
         {

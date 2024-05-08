@@ -1,24 +1,24 @@
-using HealthEvent = System.EventHandler<int>;
+using HealthEvent = System.EventHandler<float>;
 
 public interface IHealthManager
 {
-    void IncreaseHealth(int val);
-    void DecreaseHealth(int val);
+    void IncreaseHealth(float val);
+    void DecreaseHealth(float val);
     public event HealthEvent HealthEvent;
 }
 
 public class HealthManager : IHealthManager
 {
-    private int health;
+    private float health;
     public event HealthEvent HealthEvent;
 
-    public void DecreaseHealth(int val)
+    public void DecreaseHealth(float val)
     {
         health -= val;
         PublishHealthEvent();
     }
 
-    public void IncreaseHealth(int val)
+    public void IncreaseHealth(float val)
     {
         health += val;
         PublishHealthEvent();

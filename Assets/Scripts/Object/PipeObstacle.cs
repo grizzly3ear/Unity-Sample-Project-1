@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using ObstacleEventHandler = System.Action<Obstacle, UnityEngine.Vector2>;
+using ObstacleEventHandler = System.Action<PipeObstacle, UnityEngine.Vector2>;
 
 public struct ObstacleModel
 {
@@ -8,12 +8,14 @@ public struct ObstacleModel
     public float Width { get; }
     public float Height { get; }
     public ObstacleEventHandler ObstacleVectorChanged;
+    public float ObstacleSpeed { get; }
 
     public ObstacleModel(
         Vector2 spawnPoint,
         Direction direction,
         float height,
         float width,
+        float obstacleSpeed,
         ObstacleEventHandler obstacleVectorChanged
     )
     {
@@ -21,6 +23,7 @@ public struct ObstacleModel
         SpawnPoint = spawnPoint;
         Width = width;
         Height = height;
+        ObstacleSpeed = obstacleSpeed;
         ObstacleVectorChanged = obstacleVectorChanged;
     }
 }
@@ -31,28 +34,31 @@ public enum Direction
     Down
 }
 
-public class Obstacle : MonoBehaviour
+public class PipeObstacle : Obstacle
 {
     ObstacleEventHandler ObstacleVectorChanged;
+    private float obstacleSpeed;
     // Use this for initialization
     void Start()
     {
-
+        gameObject.AddComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
     void Update()
-    {
-        transform.Translate(Vector2.left * Time.deltaTime);
+    { 
+        transform.Translate(obstacleSpeed * Time.deltaTime * Vector2.left);
         ObstacleVectorChanged(this, transform.position);
-        // if out of screen
-        // publish some event to manager
-        // or manager should observe the pos of obstacle
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Show broken obstacle when touch
+        Debug.Log("Obstacle got collided enter 2d by: " + collision);
+        // called decrease health by 1.5 point
+        if (collision.gameObject.TryGetComponent<Damage>(out Damage d))
+        {
+            DealDamage(d, 1.5f);
+        }
     }
 
     public void Setup(ObstacleModel model)
@@ -60,5 +66,6 @@ public class Obstacle : MonoBehaviour
         transform.position = model.SpawnPoint;
         transform.localScale = new Vector2(model.Width, model.Height);
         ObstacleVectorChanged += model.ObstacleVectorChanged;
+        obstacleSpeed = model.ObstacleSpeed;
     }
 }
