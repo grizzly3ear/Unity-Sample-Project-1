@@ -55,7 +55,7 @@ public class PipeObstacle : Obstacle
     {
         Debug.Log("Obstacle got collided enter 2d by: " + collision);
         // called decrease health by 1.5 point
-        if (collision.gameObject.TryGetComponent<Damage>(out Damage d))
+        if (collision.gameObject.TryGetComponent(out Damage d))
         {
             DealDamage(d, 1.5f);
         }
